@@ -17,7 +17,7 @@ class PCB:
             self.pc_burst = pc_burst
 
             # state variables
-            self.states = ["NEW","READY","RUNNING","WAIT"]
+            self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
             self.current_state = self.states[0]
             self.running_time = 0
             self.waiting_time = 0
@@ -49,7 +49,11 @@ class PCB:
 
             print("              --> requesting I/O...")
             self.pc_burst -= 1
-            self.wait()
+            if (self.pc_burst <= 0):
+                self.terminate()
+                return(0)
+            else:
+                self.wait()
 
         except:
             print("An error ocurred while trying to run the given process")
@@ -71,6 +75,17 @@ class PCB:
 
         except:
             print("An error ocurred while trying to block the given process")
+
+
+    def terminated(self):
+        try:
+            self.current_state = self.states[4]
+            self.print_state()
+        except:
+            print("An error ocurred while trying to terminate the given process")
+
+    def update_vector_status(self, threadID, vector_status):
+        vector_status[threadID] = self.current_state
 
     def print_state(self):
         print("at: " + str(time.time()))
