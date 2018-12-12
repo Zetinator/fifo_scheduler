@@ -85,5 +85,5 @@ class ProcessLoader:
     def load (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
-            self.processes = [PCB(row[0],row[1]) for row in reader]
+            self.processes = [PCB(row[0], int(row[1])) for row in reader]
         return (np.array(self.processes))

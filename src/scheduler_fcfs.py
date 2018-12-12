@@ -8,7 +8,7 @@ import os
 from os import path
 import time
 
-from utils import Loader
+from utils import ProcessLoader
 from utils import PCB
 
 import threading
@@ -18,14 +18,16 @@ import numpy as np
 
 
 class DerThread (threading.Thread):
-    def __init__(self, process):
+    def __init__(self, threadID, process):
         threading.Thread.__init__(self)
+        self.threadID = threadID
         self.process = process
     def run(self):
         print ("Starting " + self.name)
+        # process.run()
         # Get lock to synchronize threads
         threadLock.acquire()
-        print_time(self.name, self.counter, 3)
+        current_status[threadID] = process.current_state
         # Free lock to release next thread
         threadLock.release()
 
@@ -33,8 +35,8 @@ class DerThread (threading.Thread):
 class Scheduler:
     def __init__(self):
 
-        for process in self.processes:
-            print("ahi va")
+        # for process in processes:
+            # print("ahi va")
 
         # state variables
         self.the_one_running = None
@@ -43,41 +45,29 @@ class Scheduler:
 
 def main(args):
     # initialize processes
-    loader = DerLoader()
-    self.processes = loader.load()
-    n = len(self.processes)
-    for i in n:
-        process
+    threadLock = threading.Lock()
+    loader = ProcessLoader()
+    processes = loader.load()
+    current_status = []
 
+    for i, process in enumerate(processes):
+        current_status.append(None)
+        print("si esta bien --> " + str(i))
 
     # initialize scheduler
     scheduler = Scheduler()
-    threadLock = threading.Lock()
     threads = []
 
     # Create new threads
-    for i in n:
-        thread = DerThread(i, self.process[i])
+    for i, process in enumerate(processes):
+        thread = DerThread(i, process)
+        thread = start()
         threads.append(thread)
-
-    # Start new Threads
-    thread1.start()
-    thread2.start()
-
-    # Add threads to thread list
-    threads.append(thread1)
-    threads.append(thread2)
 
     # Wait for all threads to complete
     for t in threads:
         t.join()
     print ("Exiting Main Thread")
-
-    try:
-        rospy.spin()
-    except KeyboardInterrupt:
-        print("Shutting down")
-
 
 if __name__ == '__main__':
     main(sys.argv)
