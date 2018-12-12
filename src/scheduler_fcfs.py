@@ -44,7 +44,7 @@ if __name__ == '__main__':
     threadLock = threading.Lock()
     # vector status 
     vector_status = []
-    loader = ProcessLoader(vector_status)
+    loader = ProcessLoader(vector_status, threadLock)
     for i in range(loader.get_n()):
         vector_status.append(None)
 
@@ -58,18 +58,17 @@ if __name__ == '__main__':
     scheduler = Scheduler()
 
     # --------------------TESTING--------------------
-    # threads = []
-    # for i, process in enumerate(processes):
-        # thread = DerThread(i, process)
-        # thread.start()
-        # threads.append(thread)
+    threads = []
+    for i, process in enumerate(processes):
+        thread = DerThread(i, process)
+        thread.start()
+        threads.append(thread)
 
     # while (1):
         # print(str(vector_status))
 
-    # Wait for all threads to complete
-    # for t in threads:
-        # t.join()
+    for t in threads:
+        t.join()
     # -----------------ENDTESTING--------------------
     print("the... "  + str(vector_status))
     print ("Exiting Main Thread")

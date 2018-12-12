@@ -10,13 +10,14 @@ import os
 import csv
 
 class PCB:
-    def __init__(self, pcb_id, name, pc_burst, vector_status):
+    def __init__(self, pcb_id, name, pc_burst, vector_status, threadLock):
         try:
             # set-up
             self.pcb_id = pcb_id
             self.name = name
             self.pc_burst = pc_burst
             self.vector_status = vector_status
+            self.threadLock = threadLock
 
             # state variables
             self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
@@ -102,7 +103,9 @@ class PCB:
             print("An error ocurred while trying to terminate the given process")
 
     def update_vector_status(self):
+        self.threadLock.acquire()
         self.vector_status[self.pcb_id] = self.current_state
+        self.threadLock.release()
 
     def print_state(self):
         print("at: " + str(time.time()))
@@ -111,9 +114,10 @@ class PCB:
 
 
 class ProcessLoader:
-    def __init__(self, vector_status):
+    def __init__(self, vector_status, threadLock):
         self.processes = []
         self.vector_status = vector_status
+        self.threadLock = threadLock
 
     def get_n (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
@@ -123,5 +127,5 @@ class ProcessLoader:
     def load (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
-            self.processes = [PCB(i, row[0], int(row[1]), self.vector_status) for i, row in enumerate(reader)]
+            self.processes = [PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock) for i, row in enumerate(reader)]
         return (np.array(self.processes))
