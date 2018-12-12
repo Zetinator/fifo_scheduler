@@ -10,15 +10,20 @@ import os
 import csv
 
 class PCB:
-    def __init__(self, name, pc_burst):
+    def __init__(self, pcb_id, name, pc_burst, vector_status):
         try:
             # set-up
+            self.pcb_id = pcb_id
             self.name = name
             self.pc_burst = pc_burst
+            self.vector_status = vector_status
 
             # state variables
             self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
             self.current_state = self.states[0]
+            # update
+            self.update_vector_status()
+
             self.running_time = 0
             self.waiting_time = 0
 
@@ -31,6 +36,9 @@ class PCB:
     def ready(self):
         try:
             self.current_state = self.states[1]
+            # update
+            self.update_vector_status()
+
             self.print_state()
         except:
             print("An error ocurred while trying to set the given process in the ready state")
@@ -39,6 +47,9 @@ class PCB:
     def run(self):
         try:
             self.current_state = self.states[2]
+            # update
+            self.update_vector_status()
+
             self.print_state()
 
             # sleep for a random time
@@ -62,6 +73,9 @@ class PCB:
     def wait(self):
         try:
             self.current_state = self.states[3]
+            # update
+            self.update_vector_status()
+
             self.print_state()
 
             # sleep for a random time
@@ -80,12 +94,15 @@ class PCB:
     def terminated(self):
         try:
             self.current_state = self.states[4]
+            # update
+            self.update_vector_status()
+
             self.print_state()
         except:
             print("An error ocurred while trying to terminate the given process")
 
-    def update_vector_status(self, threadID, vector_status):
-        vector_status[threadID] = self.current_state
+    def update_vector_status(self):
+        self.vector_status[self.pcb_id] = self.current_state
 
     def print_state(self):
         print("at: " + str(time.time()))
@@ -94,11 +111,17 @@ class PCB:
 
 
 class ProcessLoader:
-    def __init__(self):
+    def __init__(self, vector_status):
         self.processes = []
+        self.vector_status = vector_status
+
+    def get_n (self):
+        with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
+            n = sum(1 for line in f)
+        return (n)
 
     def load (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
-            self.processes = [PCB(row[0], int(row[1])) for row in reader]
+            self.processes = [PCB(i, row[0], int(row[1]), self.vector_status) for i, row in enumerate(reader)]
         return (np.array(self.processes))

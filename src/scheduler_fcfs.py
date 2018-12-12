@@ -25,12 +25,13 @@ class DerThread (threading.Thread):
     def run(self):
         # print ("Starting " + self.name)
         # print("threadID --> " + str(self.threadID))
+        print("pcb_id --> " + str(process.pcb_id))
         # print("status   --> " + str(process.current_state))
-        # process.run()
+        process.run()
         # process.ready()
         # Get lock to synchronize threads
         threadLock.acquire()
-        vector_status[self.threadID] = process.current_state
+        # vector_status[self.threadID] = process.current_state
         # print(str(vector_status))
         # Free lock to release next thread
         threadLock.release()
@@ -50,16 +51,17 @@ class Scheduler:
 
 if __name__ == '__main__':
     threadLock = threading.Lock()
+    # vector status 
+    vector_status = []
+    loader = ProcessLoader(vector_status)
+    for i in range(loader.get_n()):
+        vector_status.append(None)
+
     # initialize processes
-    loader = ProcessLoader()
     print("-----Initializing-----")
     processes = loader.load()
     print("\n")
 
-    # vector status 
-    vector_status = []
-    for i, process in enumerate(processes):
-        vector_status.append(None)
 
     # initialize scheduler
     scheduler = Scheduler()
@@ -70,6 +72,10 @@ if __name__ == '__main__':
         thread = DerThread(i, process)
         thread.start()
         threads.append(thread)
+
+    # show the actual vector_status
+    # while (1):
+        # print(str(vector_status))
 
     # Wait for all threads to complete
     for t in threads:
