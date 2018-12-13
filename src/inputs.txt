@@ -1,4 +1,4 @@
-process1, 3
+process1, 1
 process2, 6
 process3, 2
 process4, 5

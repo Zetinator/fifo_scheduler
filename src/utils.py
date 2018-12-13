@@ -128,4 +128,4 @@ class ProcessLoader:
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
             self.processes = [PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock) for i, row in enumerate(reader)]
-        return (np.array(self.processes))
+        return (self.processes)
