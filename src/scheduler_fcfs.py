@@ -33,6 +33,7 @@ class Scheduler:
             process.ready()
         print("\n")
 
+
         # state variables
         counter = 0
         self.the_one_running = None
@@ -50,16 +51,11 @@ class Scheduler:
                     self.fifo_waiting.append(pcb)
                     # print(pcb.name + " --> fifo_waiting")
             if len(self.fifo_ready) != 0:
-                # print("fifo_ready       --> ")
-                # for element in self.fifo_ready:
-                    # print("\t" + element.name)
                 to_run = self.fifo_ready.pop(0)
                 print("to be runned --> " + to_run.name)
                 thread = DerThread(counter, to_run)
                 thread.start()
-                # counter += 1
-            # print("vector_status --> " + str(vector_status))
-
+                counter += 1
 
 
 
