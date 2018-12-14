@@ -17,7 +17,15 @@ import sys
 import numpy as np
 
 
-class DerThread (threading.Thread):
+class DerThreadLoader (threading.Thread):
+    def __init__(self, threadID, process):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.process = process
+    def run(self):
+        self.process.run()
+
+class DerThreadPCB (threading.Thread):
     def __init__(self, threadID, process):
         threading.Thread.__init__(self)
         self.threadID = threadID
@@ -43,17 +51,14 @@ class Scheduler:
             for i, pcb in enumerate(processes):
                 if (pcb.current_state == 'READY') and not (pcb in self.fifo_ready):
                     self.fifo_ready.append(pcb)
-                    # print(pcb.name + " --> fifo_ready")
                 if (pcb.current_state == 'READY') and (pcb in self.fifo_waiting):
                     self.fifo_waiting.remove(pcb)
-                    # print(pcb.name + " --> from waiting to fifo_ready")
                 if (pcb.current_state == 'WAIT') and not (pcb in self.fifo_waiting):
                     self.fifo_waiting.append(pcb)
-                    # print(pcb.name + " --> fifo_waiting")
             if len(self.fifo_ready) != 0:
                 to_run = self.fifo_ready.pop(0)
                 print("to be runned --> " + to_run.name)
-                thread = DerThread(counter, to_run)
+                thread = DerThreadPCB(counter, to_run)
                 thread.start()
                 counter += 1
 
@@ -79,7 +84,7 @@ if __name__ == '__main__':
     # --------------------TESTING--------------------
     # threads = []
     # for i, process in enumerate(processes):
-    #     thread = DerThread(i, process)
+    #     thread = DerThreadPCB(i, process)
     #     thread.start()
     #     threads.append(thread)
     #

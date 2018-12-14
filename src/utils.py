@@ -30,6 +30,9 @@ class PCB:
 
             # initializing...
             self.print_state()
+
+            # go to ready
+            self.ready()
         except:
             print("An error ocurred while trying to initialize the given process")
 
@@ -108,9 +111,7 @@ class PCB:
         self.threadLock.release()
 
     def print_state(self):
-        print("at: " + str(time.time()))
-        print("PROCESS   --> " + self.name)
-        print("STATUS    --> " + self.current_state)
+        print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: " + self.current_state)
 
 
 class ProcessLoader:
