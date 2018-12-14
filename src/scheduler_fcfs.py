@@ -63,6 +63,8 @@ class Scheduler:
                 print("TO BE RUNNED --> " + self.the_one_running.name)
                 thread = DerThreadPCB(aux_counter, self.the_one_running)
                 thread.start()
+                while (self.the_one_running.current_state == 'RUNNING'):
+                    pass
                 aux_counter += 1
 
 
