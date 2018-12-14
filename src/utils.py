@@ -33,8 +33,6 @@ class PCB:
             # initializing...
             self.print_state()
 
-            # go to ready
-            # self.ready()
         except:
             print("An error ocurred while trying to initialize the given process")
 

@@ -26,8 +26,6 @@ class DerThreadLoader (threading.Thread):
         self.vector_status = vector_status
         self.vector_process = vector_process
     def run(self):
-
-        # print(vector_status)
         # initialize processes
         print("-----Initializing-----")
         loader.load()
