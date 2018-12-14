@@ -83,7 +83,7 @@ if __name__ == '__main__':
     main_memory = MainMemory(30, swap_memory, vector_process, vector_status)
 
     # initialize the loader
-    loader = ProcessLoader(vector_status, vector_process, threadLock)
+    loader = ProcessLoader(vector_status, vector_process, threadLock, main_memory)
 
     # go for it boy (#threadZeit)
     thread = DerThreadLoader(0, loader, vector_process, vector_status)

@@ -17,6 +17,7 @@ class PCB:
         self.pc_burst = pc_burst
         self.vector_status = vector_status
         self.threadLock = threadLock
+        self.pages_nedded = pages_nedded
 
         # state variables
         self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
@@ -141,7 +142,8 @@ class MainMemory:
     def __init__(self, max_pages, swap_memory, vector_process, vector_status):
         # initialize state variables
         self.max_pages = max_pages
-        self.current_pages = self.max_pages
+        self.swap_memory = swap_memory
+        self.current_pages = 0
         self.vector_process = vector_process
         self.vector_status = vector_status
         self.processes = []
@@ -149,7 +151,7 @@ class MainMemory:
     def add(self, process):
         if (self.current_pages + process.pages_nedded > self.max_pages):
             process.memory = 'MAIN'
-            swap_memory.add(process)
+            self.swap_memory.add(process)
             print("te mamaste ahora te vas a swap_memory")
         else:
             process.memory = 'SWAP'
@@ -167,7 +169,7 @@ class SwapMemory:
     def __init__(self, max_processes, vector_process, vector_status):
         # initialize state variables
         self.max_processes = max_processes
-        self.current_processes = self.max_processes
+        self.current_processes = 0
         self.vector_process = vector_process
         self.vector_status = vector_status
         self.processes = []
@@ -189,11 +191,12 @@ class SwapMemory:
 
 
 class ProcessLoader:
-    def __init__(self, vector_status, vector_process, threadLock):
+    def __init__(self, vector_status, vector_process, threadLock, main_memory):
         self.processes = vector_process
         self.vector_status = vector_status
         self.vector_process = vector_process
         self.threadLock = threadLock
+        self.main_memory = main_memory
 
     def load (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
@@ -209,4 +212,5 @@ class ProcessLoader:
             reader = csv.reader(f, delimiter=',')
             for i, row in enumerate(reader):
                 self.vector_process[i] = PCB(i, row[0], int(row[1]), int(row[2]), self.vector_status, self.threadLock)
+                self.main_memory.add(self.vector_process[i])
         return (0)
