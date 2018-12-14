@@ -62,12 +62,12 @@ class PCB:
             # statistics...
             self.running_time += sweet_dreams
 
-            print("              --> requesting I/O...")
             self.pc_burst -= 1
             if (self.pc_burst <= 0):
-                self.terminate()
+                self.terminated()
                 return(0)
             else:
+                print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: requesting I/O...")
                 self.wait()
 
         except:
@@ -88,7 +88,7 @@ class PCB:
             # statistics...
             self.waiting_time += sweet_dreams
 
-            print("              --> got it...")
+            print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: got it...")
             self.ready()
 
         except:

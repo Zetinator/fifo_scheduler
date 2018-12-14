@@ -42,7 +42,7 @@ class DerThreadPCB (threading.Thread):
 class Scheduler:
     def __init__(self, vector_process, vector_status):
         # state variables
-        counter = 0
+        aux_counter = 0
         self.the_one_running = None
         self.fifo_ready = []
         self.fifo_waiting = []
@@ -56,10 +56,10 @@ class Scheduler:
                     self.fifo_waiting.append(pcb)
             if len(self.fifo_ready) != 0:
                 self.the_one_running = self.fifo_ready.pop(0)
-                print("to be runned --> " + self.the_one_running.name)
-                thread = DerThreadPCB(counter, self.the_one_running)
+                print("TO BE RUNNED --> " + self.the_one_running.name)
+                thread = DerThreadPCB(aux_counter, self.the_one_running)
                 thread.start()
-                counter += 1
+                aux_counter += 1
 
 
 
