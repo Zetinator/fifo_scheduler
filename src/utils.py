@@ -115,18 +115,25 @@ class PCB:
 
 
 class ProcessLoader:
-    def __init__(self, vector_status, threadLock):
-        self.processes = []
+    def __init__(self, vector_status, vector_process, threadLock):
+        self.processes = vector_process
         self.vector_status = vector_status
+        self.vector_process = vector_process
         self.threadLock = threadLock
-
-    def get_n (self):
-        with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
-            n = sum(1 for line in f)
-        return (n)
 
     def load (self):
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
+            n = sum(1 for line in f)
+
+        for i in range(n):
+            self.threadLock.acquire()
+            self.vector_status.append(None)
+            self.vector_process.append(None)
+            self.threadLock.release()
+
+        with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
-            self.processes = [PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock) for i, row in enumerate(reader)]
-        return (self.processes)
+            for i, row in enumerate(reader):
+                self.vector_process[i] = PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock)
+                print(self.vector_process[i].name + "... created")
+        return (0)
