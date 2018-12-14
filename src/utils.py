@@ -11,54 +11,32 @@ import csv
 
 class PCB:
     def __init__(self, pcb_id, name, pc_burst, pages_nedded, vector_status, threadLock):
-        # set-up
-        self.pcb_id = pcb_id
-        self.name = name
-        self.pc_burst = pc_burst
-        self.vector_status = vector_status
-        self.threadLock = threadLock
-        self.pages_nedded = pages_nedded
+        try:
+            # set-up
+            self.pcb_id = pcb_id
+            self.name = name
+            self.pc_burst = pc_burst
+            self.vector_status = vector_status
+            self.threadLock = threadLock
+            self.pages_nedded = pages_nedded
 
-        # state variables
-        self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
-        self.current_state = self.states[0]
-        self.memory = None
-        # update
-        self.update_vector_status()
+            # state variables
+            self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
+            self.current_state = self.states[0]
+            self.memory = None
+            # update
+            self.update_vector_status()
 
-        self.running_time = 0
-        self.waiting_time = 0
+            self.running_time = 0
+            self.waiting_time = 0
 
-        # initializing...
-        self.print_state()
+            # initializing...
+            self.print_state()
 
-        # go to ready
-        self.ready()
-#        try:
-#            # set-up
-#            self.pcb_id = pcb_id
-#            self.name = name
-#            self.pc_burst = pc_burst
-#            self.vector_status = vector_status
-#            self.threadLock = threadLock
-#
-#            # state variables
-#            self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
-#            self.current_state = self.states[0]
-#            self.memory = None
-#            # update
-#            self.update_vector_status()
-#
-#            self.running_time = 0
-#            self.waiting_time = 0
-#
-#            # initializing...
-#            self.print_state()
-#
-#            # go to ready
-#            self.ready()
-#        except:
-#            print("An error ocurred while trying to initialize the given process")
+            # go to ready
+            # self.ready()
+        except:
+            print("An error ocurred while trying to initialize the given process")
 
 
     def ready(self):
@@ -151,9 +129,11 @@ class MainMemory:
     def add(self, process):
         if (self.current_pages + process.pages_nedded > self.max_pages):
             process.memory = 'SWAP'
+            process.ready()
             self.swap_memory.add(process)
         else:
             process.memory = 'MAIN'
+            process.ready()
             self.processes.append(process)
             self.current_pages += process.pages_nedded
 
