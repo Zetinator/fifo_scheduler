@@ -10,6 +10,8 @@ import time
 
 from utils import ProcessLoader
 from utils import PCB
+from utils import MainMemory
+from utils import SwapMemory
 
 import threading
 import time
@@ -75,6 +77,10 @@ if __name__ == '__main__':
     vector_status = []
     # vector_processes
     vector_process = []
+
+    # initialize main memory
+    swap_memory = SwapMemory(50, vector_process, vector_status)
+    main_memory = MainMemory(30, swap_memory, vector_process, vector_status)
 
     # initialize the loader
     loader = ProcessLoader(vector_status, vector_process, threadLock)

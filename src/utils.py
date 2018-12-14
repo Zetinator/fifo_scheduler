@@ -10,31 +10,54 @@ import os
 import csv
 
 class PCB:
-    def __init__(self, pcb_id, name, pc_burst, vector_status, threadLock):
-        try:
-            # set-up
-            self.pcb_id = pcb_id
-            self.name = name
-            self.pc_burst = pc_burst
-            self.vector_status = vector_status
-            self.threadLock = threadLock
+    def __init__(self, pcb_id, name, pc_burst, pages_nedded, vector_status, threadLock):
+        # set-up
+        self.pcb_id = pcb_id
+        self.name = name
+        self.pc_burst = pc_burst
+        self.vector_status = vector_status
+        self.threadLock = threadLock
 
-            # state variables
-            self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
-            self.current_state = self.states[0]
-            # update
-            self.update_vector_status()
+        # state variables
+        self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
+        self.current_state = self.states[0]
+        self.memory = None
+        # update
+        self.update_vector_status()
 
-            self.running_time = 0
-            self.waiting_time = 0
+        self.running_time = 0
+        self.waiting_time = 0
 
-            # initializing...
-            self.print_state()
+        # initializing...
+        self.print_state()
 
-            # go to ready
-            self.ready()
-        except:
-            print("An error ocurred while trying to initialize the given process")
+        # go to ready
+        self.ready()
+#        try:
+#            # set-up
+#            self.pcb_id = pcb_id
+#            self.name = name
+#            self.pc_burst = pc_burst
+#            self.vector_status = vector_status
+#            self.threadLock = threadLock
+#
+#            # state variables
+#            self.states = ["NEW","READY","RUNNING","WAIT","TERMINATED"]
+#            self.current_state = self.states[0]
+#            self.memory = None
+#            # update
+#            self.update_vector_status()
+#
+#            self.running_time = 0
+#            self.waiting_time = 0
+#
+#            # initializing...
+#            self.print_state()
+#
+#            # go to ready
+#            self.ready()
+#        except:
+#            print("An error ocurred while trying to initialize the given process")
 
 
     def ready(self):
@@ -67,7 +90,7 @@ class PCB:
                 self.terminated()
                 return(0)
             else:
-                print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: requesting I/O...")
+                print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tMEMORY: " + str(self.memory) + "\tSTATUS: requesting I/O..." )
                 self.wait()
 
         except:
@@ -88,7 +111,7 @@ class PCB:
             # statistics...
             self.waiting_time += sweet_dreams
 
-            print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: got it...")
+            print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tMEMORY: " + str(self.memory) + "\tSTATUS: got it..." )
             self.ready()
 
         except:
@@ -111,7 +134,58 @@ class PCB:
         self.threadLock.release()
 
     def print_state(self):
-        print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tSTATUS: " + self.current_state)
+        print("at: " + str(time.time()) + "\tPROCESS: " + self.name + "\tMEMORY: " + str(self.memory) + "\tSTATUS: " + self.current_state)
+
+
+class MainMemory:
+    def __init__(self, max_pages, swap_memory, vector_process, vector_status):
+        # initialize state variables
+        self.max_pages = max_pages
+        self.current_pages = self.max_pages
+        self.vector_process = vector_process
+        self.vector_status = vector_status
+        self.processes = []
+
+    def add(self, process):
+        if (self.current_pages + process.pages_nedded > self.max_pages):
+            process.memory = 'MAIN'
+            swap_memory.add(process)
+            print("te mamaste ahora te vas a swap_memory")
+        else:
+            process.memory = 'SWAP'
+            self.processes.append(process)
+            self.current_pages += 1
+
+    def remove(self):
+        while ((len(self.processes) == 0) or (len(self.processes) != len(vector_process))):
+            for i, pcb in enumerate(self.vector_process):
+                if (pcb.current_state == 'TERMINATED'):
+                    self.processes.remove(pcb)
+
+
+class SwapMemory:
+    def __init__(self, max_processes, vector_process, vector_status):
+        # initialize state variables
+        self.max_processes = max_processes
+        self.current_processes = self.max_processes
+        self.vector_process = vector_process
+        self.vector_status = vector_status
+        self.processes = []
+
+    def add(self, process):
+        if (self.current_processes + 1 > self.max_processes):
+            process.terminated()
+            print("No hay espacio para ti vete al diablo")
+        else:
+            self.processes.append(process)
+            self.current_processes += 1
+
+    def remove(self):
+        while ((len(self.processes) == 0) or (len(self.processes) != len(vector_process))):
+            for i, pcb in enumerate(self.vector_process):
+                if (pcb.current_state == 'TERMINATED'):
+                    self.processes.remove(pcb)
+
 
 
 class ProcessLoader:
@@ -134,5 +208,5 @@ class ProcessLoader:
         with open(os.path.join(os.getcwd(), 'inputs.txt'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
             for i, row in enumerate(reader):
-                self.vector_process[i] = PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock)
+                self.vector_process[i] = PCB(i, row[0], int(row[1]), int(row[2]), self.vector_status, self.threadLock)
         return (0)
