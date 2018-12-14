@@ -1,5 +1,5 @@
-process1, 1, 8
-process2, 6, 8
-process3, 2, 8
+process1, 1, 15
+process2, 6, 10
+process3, 2, 12
 process4, 5, 8
 process5, 4, 8

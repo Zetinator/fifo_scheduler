@@ -150,13 +150,12 @@ class MainMemory:
 
     def add(self, process):
         if (self.current_pages + process.pages_nedded > self.max_pages):
-            process.memory = 'MAIN'
-            self.swap_memory.add(process)
-            print("te mamaste ahora te vas a swap_memory")
-        else:
             process.memory = 'SWAP'
+            self.swap_memory.add(process)
+        else:
+            process.memory = 'MAIN'
             self.processes.append(process)
-            self.current_pages += 1
+            self.current_pages += process.pages_nedded
 
     def remove(self):
         while ((len(self.processes) == 0) or (len(self.processes) != len(vector_process))):
