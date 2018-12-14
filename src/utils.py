@@ -135,5 +135,4 @@ class ProcessLoader:
             reader = csv.reader(f, delimiter=',')
             for i, row in enumerate(reader):
                 self.vector_process[i] = PCB(i, row[0], int(row[1]), self.vector_status, self.threadLock)
-                print(self.vector_process[i].name + "... created")
         return (0)

@@ -46,7 +46,9 @@ class Scheduler:
         self.the_one_running = None
         self.fifo_ready = []
         self.fifo_waiting = []
-        while (1):
+        self.fifo_terminated = []
+
+        while ((len(self.fifo_terminated) == 0) or (len(self.fifo_terminated) != len(vector_process))):
             for i, pcb in enumerate(vector_process):
                 if (pcb.current_state == 'READY') and not (pcb in self.fifo_ready):
                     self.fifo_ready.append(pcb)
@@ -54,6 +56,8 @@ class Scheduler:
                     self.fifo_waiting.remove(pcb)
                 if (pcb.current_state == 'WAIT') and not (pcb in self.fifo_waiting):
                     self.fifo_waiting.append(pcb)
+                if (pcb.current_state == 'TERMINATED') and not (pcb in self.fifo_terminated):
+                    self.fifo_terminated.append(pcb)
             if len(self.fifo_ready) != 0:
                 self.the_one_running = self.fifo_ready.pop(0)
                 print("TO BE RUNNED --> " + self.the_one_running.name)
@@ -70,30 +74,15 @@ if __name__ == '__main__':
     # vector_processes
     vector_process = []
 
+    # initialize the loader
     loader = ProcessLoader(vector_status, vector_process, threadLock)
 
-    # go for it good boy thread
+    # go for it boy (#threadZeit)
     thread = DerThreadLoader(0, loader, vector_process, vector_status)
     thread.start()
 
     # initialize scheduler
     scheduler = Scheduler(vector_process, vector_status)
 
-    # while (1):
-        # print(vector_status)
-        # print(vector_process)
-    # --------------------TESTING--------------------
-    # threads = []
-    # for i, process in enumerate(processes):
-    #     thread = DerThreadPCB(i, process)
-    #     thread.start()
-    #     threads.append(thread)
-    #
-    # while (1):
-    #     print(str(vector_status))
-    #
-    # for t in threads:
-    #     t.join()
-    # -----------------ENDTESTING--------------------
-    print("FINAL_STATUS_VECTOR: "  + str(vector_status))
-    print ("Exiting Main Thread")
+    print("\nFINAL_STATUS_VECTOR: "  + str(vector_status))
+    print ("Exiting Main Thread... das war alles")
